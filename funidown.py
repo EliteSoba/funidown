@@ -7,16 +7,6 @@ import json
 import urllib
 import playlistdown
 
-def hmsToSec(hms):
-	#Works for HH:MM:SS and MM:SS
-	split = hms.split(":")
-	rate = 1
-	total = 0
-	for part in reversed(split):
-		total = total + rate * int(part)
-		rate = rate * 60
-	return total
-
 def main(argv):
 	video = ""
 	if len(argv) == 0:
