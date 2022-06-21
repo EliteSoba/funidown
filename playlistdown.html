@@ -82,12 +82,16 @@
     try {
       for (let i = 0; i < parts.length; i++) {
         const part = parts[i];
-        const range = byteRanges[i].match(/[0-9]+/g).map(a => parseInt(a, 10));
-        const header = {
-          "accept": "*/*",
-          "accept-language": "en-US,en;q=0.9",
-          "range": `bytes=${range[1]}-${range[0]+range[1]-1}`,
-        };
+        let header = {};
+        let range;
+        if (byteRanges[i]) {
+          range = byteRanges[i].match(/[0-9]+/g).map(a => parseInt(a, 10));
+          header = {
+            "accept": "*/*",
+            "accept-language": "en-US,en;q=0.9",
+            "range": `bytes=${range[1]}-${range[0]+range[1]-1}`,
+          };
+        }
         const req = await fetch(part, { headers: header });
         const res = await req.blob();
         videoParts.push(res);
