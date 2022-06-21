@@ -23,7 +23,7 @@ def main(argv):
 	id = page[page.find("FUNImationID")+15:page.find("FUNImationID")+31]
 	token = page[page.find("authToken")+12:]
 	token = token[:token.find("\"")]
-	url = "http://wpc.8c48.edgecastcdn.net/038C48/SV/480/" + id + "/" + id + "-480-750K.mp4.m3u8" + token
+	url = "http://wpc.8c48.edgecastcdn.net/038C48/SV/480/" + id + "/" + id + "-480-1500K.mp4.m3u8" + token
 	title = video[video.rfind("/")+1:]
 	if "?" in title:
 		title = title[:title.find("?")]

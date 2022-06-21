@@ -1,0 +1,116 @@
+<HTML>
+<head>
+<title>Playlist Downloader</title>
+<style>
+  body {
+    background: #333333;
+    color: #aaaaaa;
+  }
+  main {
+    max-width: 80%;
+    display: flex;
+    margin: auto;
+    flex-direction: column;
+    align-items: center;
+  }
+  .title {
+    font-size: 30px;
+  }
+
+  .section {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+  }
+
+  #dl {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 3px;
+    outline: none;
+  }
+
+  #status {
+    height: 20px;
+    width: 500px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #666666;
+    margin-top: 30px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  #progress {
+    background: #999999;
+    height: 100%;
+  }
+</style>
+</head>
+<body>
+<main>
+  <section class="title">
+    <h1>Playlist Downloader</h1>
+  </section>
+  <section class="section">
+    <div>Playlist URL: <input id="input"></input></div>
+    <div><button id="dl">Download</button></div>
+    <div id="status" class="hidden"><div id="progress"></div></div>
+  </section>
+</main>
+</body>
+<script>
+  async function dl() {
+    const url = document.getElementById('input').value;
+    if (!url) {
+      return;
+    }
+    const status = document.getElementById('status');
+    const progress = document.getElementById('progress');
+    progress.style.width = '0%';
+    status.classList.remove('hidden');
+
+    const request = await fetch(url)
+    const result = await request.text();
+
+    let parts = result.split('\n').filter(part => part[0] != '#' && part.length);
+    const byteRanges = result.split('\n').filter(part => part.indexOf('EXT-X-BYTERANGE') != -1);
+
+    const videoParts = [];
+    parts = parts.splice(0, 1);
+    try {
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        const range = byteRanges[i].match(/[0-9]+/g).map(a => parseInt(a, 10));
+        const header = {
+          "accept": "*/*",
+          "accept-language": "en-US,en;q=0.9",
+          "range": `bytes=${range[1]}-${range[0]+range[1]-1}`,
+        };
+        const req = await fetch(part, { headers: header });
+        const res = await req.blob();
+        videoParts.push(res);
+        progress.style.width = `${i * 100 / parts.length}%`;
+      }
+    }
+    catch (err) {
+      console.log('something went wrong. dling everything gotten');
+    }
+    finally {
+      const data = new Blob(videoParts);
+
+      var a = window.document.createElement('a');
+      a.href = window.URL.createObjectURL(data);
+      a.download = 'vid.ts';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    status.classList.add('hidden');
+  }
+
+  document.getElementById('dl').addEventListener('click', dl);
+</script>
+</HTML>
