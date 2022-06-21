@@ -79,7 +79,6 @@
     const byteRanges = result.split('\n').filter(part => part.indexOf('EXT-X-BYTERANGE') != -1);
 
     const videoParts = [];
-    parts = parts.splice(0, 1);
     try {
       for (let i = 0; i < parts.length; i++) {
         const part = parts[i];
