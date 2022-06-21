@@ -81,7 +81,13 @@
     const videoParts = [];
     try {
       for (let i = 0; i < parts.length; i++) {
-        const part = parts[i];
+        let part = parts[i];
+        try {
+          new URL(part);
+        }
+        catch (err) {
+          part = `${(new URL(url)).origin}/${part}`;
+        }
         let header = {};
         let range;
         if (byteRanges[i]) {
