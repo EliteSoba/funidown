@@ -112,7 +112,11 @@
 
       var a = window.document.createElement('a');
       a.href = window.URL.createObjectURL(data);
-      a.download = 'vid.ts';
+      var u = 'vid';
+      if (crypto.randomUUID) {
+        u = crypto.randomUUID();
+      }
+      a.download = `${u}.ts`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
